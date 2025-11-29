@@ -22,35 +22,36 @@
             </head>
 
             <body>
-                <form:form method="post" action="/admin/user/create" modelAttribute="newUser">
+                <form:form action="/admin/user/updateUser" method="post" modelAttribute="updateUser">
                     <div class="container mt-5">
                         <div class="row">
                             <div class="col-md-6 col-12 mx-auto">
                                 <h3>
-                                    Create a user
+                                    Edit User
                                 </h3>
                                 <hr>
+                                <form:hidden path="id" />
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Email:</label>
                                     <form:input type="email" class="form-control" path="email" />
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Password:</label>
-                                    <form:input type="password" class="form-control" path="password" />
+                                    <form:input type="text" class="form-control" path="password" />
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Phone Number:</label>
-                                    <form:input type="phone" class="form-control" path="phone" />
+                                    <form:input type="text" class="form-control" path="phone" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="exampleInputPassword1" class="form-label">Full Name:</label>s
-                                    <form:input type="fullName" class="form-control" path="name" />
+                                    <label for="exampleInputPassword1" class="form-label">Full Name:</label>
+                                    <form:input type="text" class="form-control" path="name" />
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Address:</label>
-                                    <form:input type="address" class="form-control" path="address" />
+                                    <form:input type="text" class="form-control" path="address" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Create</button>
+                                <button type="submit" class="btn btn-primary">Update User</button>
                             </div>
                         </div>
                     </div>
