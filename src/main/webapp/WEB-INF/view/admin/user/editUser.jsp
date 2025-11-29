@@ -33,7 +33,7 @@
                                 <form:hidden path="id" />
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Email:</label>
-                                    <form:input type="email" class="form-control" path="email" />
+                                    <form:input type="email" class="form-control" path="email" readonly="true" />
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Password:</label>

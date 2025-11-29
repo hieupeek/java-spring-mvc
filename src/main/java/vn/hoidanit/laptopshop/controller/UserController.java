@@ -5,10 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.ui.Model;
 
 import vn.hoidanit.laptopshop.domain.User;
@@ -32,7 +30,7 @@ public class UserController {
     // }
 
     // view all user
-    @RequestMapping("/admin/user")
+    @GetMapping("/admin/user")
     public String getAdminHome(Model model) {
         List<User> listUser = this.userService.getAllUser();
         model.addAttribute("listUser", listUser);
@@ -40,7 +38,7 @@ public class UserController {
     }
 
     // view user detail
-    @RequestMapping("/admin/user/view/{id}")
+    @GetMapping("/admin/user/view/{id}")
     public String getUserDetailPage(Model model, @PathVariable Long id) {
         model.addAttribute("user", this.userService.getUserById(id));
         return "admin/user/viewUserDetail";
@@ -54,7 +52,7 @@ public class UserController {
     }
 
     // create user
-    @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
+    @PostMapping(value = "/admin/user/create")
     public String createUser(Model model, @ModelAttribute("newUser") User user) {
         System.out.println("Creating user..." + user);
         this.userService.handleSaveUser(user);
@@ -69,7 +67,7 @@ public class UserController {
     }
 
     // update user
-    @RequestMapping(value = "/admin/user/updateUser", method = RequestMethod.POST)
+    @PostMapping(value = "/admin/user/updateUser")
     public String updateUser(Model model, @ModelAttribute("updateUser") User user) {
         System.out.println("Updating user..." + user);
         this.userService.handleSaveUser(user);
@@ -77,7 +75,7 @@ public class UserController {
     }
 
     // delete user
-    @RequestMapping(value = "/admin/user/deleteUser/{id}")
+    @GetMapping(value = "/admin/user/deleteUser/{id}")
     public String deleteUser(@PathVariable Long id) {
         System.out.println("Deleting user...");
         this.userService.deleteUserById(id);
