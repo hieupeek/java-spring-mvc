@@ -13,7 +13,7 @@
                 <meta name="author" content="Hỏi Dân IT" />
                 <title>Dashboard - Hỏi Dân IT</title>
                 <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-                <link href="/css/styles.css" rel="stylesheet" />
+                <link href="/admin/css/styles.css" rel="stylesheet" />
                 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
             </head>
 
@@ -44,6 +44,7 @@
                                                         <th scope="col">ID</th>
                                                         <th scope="col">Email</th>
                                                         <th scope="col">Full Name</th>
+                                                        <th scope="col">Role</th>
                                                         <th scope="col">Action</th>
                                                     </tr>
                                                 </thead>
@@ -53,6 +54,7 @@
                                                             <th scope="row">${user.id}</th>
                                                             <td>${user.email}</td>
                                                             <td>${user.name}</td>
+                                                            <td>${user.role.name}</td>
                                                             <td>
                                                                 <a href="/admin/user/view/${user.id}"
                                                                     class="btn btn-success">View</a>
@@ -75,7 +77,7 @@
                 </div>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
                     crossorigin="anonymous"></script>
-                <script src="js/scripts.js"></script>
+                <script src="/admin/js/scripts.js"></script>
             </body>
 
             </html>
