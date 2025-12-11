@@ -53,7 +53,7 @@
                                                         <tr>
                                                             <th scope="row">${user.id}</th>
                                                             <td>${user.email}</td>
-                                                            <td>${user.name}</td>
+                                                            <td>${user.fullName}</td>
                                                             <td>${user.role.name}</td>
                                                             <td>
                                                                 <a href="/admin/user/view/${user.id}"
