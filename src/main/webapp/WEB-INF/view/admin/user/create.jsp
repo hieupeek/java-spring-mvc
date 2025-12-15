@@ -78,8 +78,9 @@
                                                         <div class="mb-3">
                                                             <label for="number" class="form-label">Phone
                                                                 Number:</label>
-                                                            <form:input type="phone" class="form-control"
-                                                                path="phone" />
+                                                            <form:input type="phone" class="form-control" path="phone"
+                                                                cssErrorClass="form-control is-invalid" />
+                                                            <form:errors path="phone" cssClass="invalid-feedback" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -96,8 +97,9 @@
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
                                                             <label for="address" class="form-label">Address:</label>
-                                                            <form:input type="address" class="form-control"
-                                                                path="address" />
+                                                            <form:input type="text" class="form-control" path="address"
+                                                                cssErrorClass="form-control is-invalid" />
+                                                            <form:errors path="address" cssClass="invalid-feedback" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">

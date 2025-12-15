@@ -30,8 +30,8 @@
                         </button>
                         <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                             <div class="navbar-nav mx-auto">
-                                <a href="index.html" class="nav-item nav-link active">Trang Chủ</a>
-                                <a href="shop.html" class="nav-item nav-link">Sản Phẩm</a>
+                                <a href="/" class="nav-item nav-link active">Trang Chủ</a>
+                                <a href="/" class="nav-item nav-link">Sản Phẩm</a>
                                 <!-- <a href="/client/product/detail" class="nav-item nav-link">Shop Detail</a> -->
                                 <!-- <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>

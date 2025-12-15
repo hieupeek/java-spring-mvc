@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.ui.Model;
 
+import vn.hoidanit.laptopshop.domain.Product;
 import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.service.UploadService;
 import vn.hoidanit.laptopshop.service.UserService;
@@ -104,9 +105,26 @@ public class UserController {
 
     // update user
     @PostMapping(value = "/admin/user/updateUser")
-    public String updateUser(Model model, @ModelAttribute("updateUser") User user) {
+    public String updateUser(Model model, @ModelAttribute("updateUser") @Valid User user,
+            BindingResult updateUserBindingResult,
+            @RequestParam("hoidanitFile") MultipartFile file) {
         System.out.println("Updating user..." + user);
-        this.userService.handleSaveUser(user);
+
+        User currentUser = this.userService.getUserById(user.getId());
+        if (currentUser != null) {
+            if (!file.isEmpty()) {
+                String img = this.uploadService.handleSaveUploadFile(file, "Avatar");
+                user.setAvatar(img);
+            }
+        }
+        currentUser.setEmail(user.getEmail());
+        currentUser.setPassword(user.getPassword());
+        currentUser.setFullName(user.getFullName());
+        currentUser.setAddress(user.getAddress());
+        currentUser.setPhone(user.getPhone());
+        currentUser.setRole(this.userService.findRoleByName(user.getRole().getName()));
+
+        this.userService.handleSaveUser(currentUser);
         return "redirect:/admin/user";
     }
 

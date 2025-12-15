@@ -49,22 +49,23 @@
                                     <div class="container mt-5">
                                         <div class="row">
                                             <div class="col-md-6 col-12 mx-auto">
-                                                <h3>
-                                                    Create a Product
-                                                </h3>
+                                                <h3>Create a Product</h3>
                                                 <hr>
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
                                                             <label for="name" class="form-label">Name:</label>
-                                                            <form:input type="text" class="form-control" path="name" />
+                                                            <form:input type="text" class="form-control" path="name"
+                                                                cssErrorClass="form-control is-invalid" />
+                                                            <form:errors path="name" cssClass="invalid-feedback" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
                                                             <label for="price" class="form-label">Price:</label>
-                                                            <form:input type="number" class="form-control"
-                                                                path="price" />
+                                                            <form:input type="number" class="form-control" path="price"
+                                                                cssErrorClass="form-control is-invalid" />
+                                                            <form:errors path="price" cssClass="invalid-feedback" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -74,7 +75,9 @@
                                                         <label for="detailDesc" class="form-label">Detail
                                                             description:</label>
                                                         <form:textarea type="text" class="form-control"
-                                                            path="detailDesc" rows="3" />
+                                                            path="detailDesc" rows="3"
+                                                            cssErrorClass="form-control is-invalid" />
+                                                        <form:errors path="detailDesc" cssClass="invalid-feedback" />
                                                     </div>
                                                 </div>
 
@@ -83,7 +86,9 @@
                                                         <div class="mb-3">
                                                             <label for="quantity" class="form-label">Quantity:</label>
                                                             <form:input type="number" class="form-control"
-                                                                path="quantity" />
+                                                                path="quantity"
+                                                                cssErrorClass="form-control is-invalid" />
+                                                            <form:errors path="quantity" cssClass="invalid-feedback" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -91,7 +96,9 @@
                                                             <label for="shortDesc" class="form-label">Short
                                                                 description:</label>
                                                             <form:input type="text" class="form-control"
-                                                                path="shortDesc" />
+                                                                path="shortDesc"
+                                                                cssErrorClass="form-control is-invalid" />
+                                                            <form:errors path="shortDesc" cssClass="invalid-feedback" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -126,7 +133,6 @@
                                                         </div>
                                                     </div> -->
                                                 </div>
-
 
                                                 <div class="row">
                                                     <div class="mb-3">

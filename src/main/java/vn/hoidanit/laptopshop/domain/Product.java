@@ -1,10 +1,14 @@
 package vn.hoidanit.laptopshop.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "products")
@@ -13,14 +17,34 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotEmpty(message = "Name cannot be empty")
     private String name;
+
+    @NotNull
+    @DecimalMin(value = "0", inclusive = false, message = "Price must be greater than 0")
     private double price;
-    private String images;
+
+    @Column(name = "image")
+    private String image;
+
+    @NotNull
+    @Column(columnDefinition = "MEDIUMTEXT")
+    @NotEmpty(message = "Detail description cannot be empty")
     private String detailDesc;
+
+    @NotNull
+    @Column(columnDefinition = "TEXT")
+    @NotEmpty(message = "Short description cannot be empty")
     private String shortDesc;
+
     private long quantity;
+
     private long sold;
+
+    @NotEmpty(message = "Factory cannot be empty")
     private String factory;
+
+    @NotEmpty(message = "Target cannot be empty")
     private String target;
 
     public long getId() {
@@ -47,12 +71,12 @@ public class Product {
         this.price = price;
     }
 
-    public String getImages() {
-        return images;
+    public String getImage() {
+        return image;
     }
 
-    public void setImages(String images) {
-        this.images = images;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getDetailDesc() {
@@ -105,7 +129,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product [id=" + id + ", name=" + name + ", price=" + price + ", images=" + images + ", delailDesc="
+        return "Product [id=" + id + ", name=" + name + ", price=" + price + ", image=" + image + ", delailDesc="
                 + detailDesc + ", shortDesc=" + shortDesc + ", quantity=" + quantity + ", sold=" + sold + ", factory="
                 + factory + ", target=" + target + "]";
     }

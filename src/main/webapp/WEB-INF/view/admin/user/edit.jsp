@@ -57,7 +57,7 @@
                                                 <div class="mb-3">
                                                     <label for="exampleInputPassword1" class="form-label">Full
                                                         Name:</label>
-                                                    <form:input type="text" class="form-control" path="name" />
+                                                    <form:input type="text" class="form-control" path="fullName" />
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="exampleInputPassword1"

@@ -12,7 +12,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -28,25 +27,21 @@ public class User {
     private String email;
 
     @NotNull(message = "Password cannot be empty")
-    @Size(min = 2, max = 30, message = "Password must be between 2 and 30 characters")
     private String password;
 
     @NotEmpty(message = "Name cannot be empty")
-    @Size(min = 2, max = 50, message = "Full name must be between 2 and 50 characters")
     private String fullName;
 
     @NotEmpty(message = "Address cannot be empty")
-    @Size(max = 100, message = "Address must be less than 100 characters")
     private String address;
 
     @NotEmpty(message = "Phone cannot be empty")
-    @Size(min = 10, max = 10, message = "Phone number must be 10 characters")
     private String phone;
 
     private String avatar;
 
     // roleId
-    // user many -> to one role
+    // user many -> to one role0
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

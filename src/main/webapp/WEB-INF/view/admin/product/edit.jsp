@@ -11,10 +11,29 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
                 <meta name="description" content="Hỏi Dân IT - Dự án laptopshop" />
                 <meta name="author" content="Hỏi Dân IT" />
-                <title>User - Hỏi Dân IT</title>
+                <title>Product - Hỏi Dân IT</title>
                 <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
                 <link href="/admin/css/styles.css" rel="stylesheet" />
                 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+                <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+                <script>
+                    $(document).ready(() => {
+                        const avatarFile = $("#avatarFile");
+                        const originalImage = "${updateProduct.image}";
+                        if (originalImage) {
+                            const urlImage = "/admin/images/product/" + originalImage;
+                            $("#avatarPreview").attr("src", urlImage);
+                            $("#avatarPreview").css({ "display": "block" });
+                        }
+
+                        avatarFile.change(function (e) {
+                            const imgURL = URL.createObjectURL(e.target.files[0]);
+                            $("#avatarPreview").attr("src", imgURL);
+                            $("#avatarPreview").css({ "display": "block" });
+                        });
+                    });
+                </script>
+
             </head>
 
             <body class="sb-nav-fixed">
@@ -26,47 +45,112 @@
                     <div id="layoutSidenav_content">
                         <main>
                             <div class="container-fluid px-4">
-                                <h1 class="mt-4">User</h1>
+                                <h1 class="mt-4">Product</h1>
                                 <ol class="breadcrumb mb-4">
-                                    <li class="breadcrumb-item active">User</li>
+                                    <li class="breadcrumb-item active">Product</li>
                                 </ol>
-                                <form:form action="/admin/user/updateUser" method="post" modelAttribute="updateUser">
+                                <form:form action="/admin/product/updateProduct" method="post"
+                                    modelAttribute="updateProduct" enctype="multipart/form-data">
                                     <div class="container mt-5">
-                                        <div class="row">
-                                            <div class="col-md-6 col-12 mx-auto">
-                                                <h3>
-                                                    Edit User
-                                                </h3>
-                                                <hr>
-                                                <form:hidden path="id" />
-                                                <div class="mb-3">
-                                                    <label for="exampleInputEmail1" class="form-label">Email:</label>
-                                                    <form:input type="email" class="form-control" path="email"
-                                                        readonly="true" />
+                                        <div class="col-md-6 col-12 mx-auto">
+                                            <h3>Edit a Product</h3>
+                                            <hr>
+                                            <form:hidden path="id" />
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="name" class="form-label">Name:</label>
+                                                        <form:input type="text" class="form-control" path="name"
+                                                            cssErrorClass="form-control is-invalid" />
+                                                        <form:errors path="name" cssClass="invalid-feedback" />
+                                                    </div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="exampleInputPassword1"
-                                                        class="form-label">Password:</label>
-                                                    <form:input type="text" class="form-control" path="password" />
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="price" class="form-label">Price:</label>
+                                                        <form:input type="number" class="form-control" path="price"
+                                                            cssErrorClass="form-control is-invalid" />
+                                                        <form:errors path="price" cssClass="invalid-feedback" />
+                                                    </div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="exampleInputPassword1" class="form-label">Phone
-                                                        Number:</label>
-                                                    <form:input type="text" class="form-control" path="phone" />
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="exampleInputPassword1" class="form-label">Full
-                                                        Name:</label>
-                                                    <form:input type="text" class="form-control" path="name" />
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="exampleInputPassword1"
-                                                        class="form-label">Address:</label>
-                                                    <form:input type="text" class="form-control" path="address" />
-                                                </div>
-                                                <button type="submit" class="btn btn-primary">Update
-                                                    User</button>
                                             </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="detailDesc" class="form-label">Detail
+                                                        description:</label>
+                                                    <form:textarea type="text" class="form-control" path="detailDesc"
+                                                        rows="3" cssErrorClass="form-control is-invalid" />
+                                                    <form:errors path="detailDesc" cssClass="invalid-feedback" />
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="quantity" class="form-label">Quantity:</label>
+                                                        <form:input type="number" class="form-control" path="quantity"
+                                                            cssErrorClass="form-control is-invalid" />
+                                                        <form:errors path="quantity" cssClass="invalid-feedback" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="shortDesc" class="form-label">Short
+                                                            description:</label>
+                                                        <form:input type="text" class="form-control" path="shortDesc"
+                                                            cssErrorClass="form-control is-invalid" />
+                                                        <form:errors path="shortDesc" cssClass="invalid-feedback" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="factory" class="form-label">Factory:</label>
+                                                        <form:select class="form-select"
+                                                            aria-label="Default select example" path="factory">
+                                                            <form:option value="Asus">Asus</form:option>
+                                                            <form:option value="Dell">Dell</form:option>
+                                                            <form:option value="Apple">Apple</form:option>
+                                                        </form:select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="target" class="form-label">Target:</label>
+                                                        <form:select class="form-select"
+                                                            aria-label="Default select example" path="target">
+                                                            <form:option value="Office">Văn phòng</form:option>
+                                                            <form:option value="Gaming">Gaming</form:option>
+                                                            <form:option value="Macbook">Macbook</form:option>
+                                                        </form:select>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label for="sold" class="form-label">Sold:</label>
+                                                            <form:input type="text" class="form-control" path="sold" />
+                                                        </div>
+                                                    </div> -->
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="mb-3">
+                                                    <label for="avatarFile" class="form-label">Choose
+                                                        Images:</label>
+                                                    <input class="form-control" type="file" id="avatarFile"
+                                                        accept=".png, .jpg, .jpeg" name="hoidanitFile" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="mb-3">
+                                                    <img id="avatarPreview" src="" alt="Avatar Preview"
+                                                        style="display: none; max-width: 200px;">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Update</button>
                                         </div>
                                     </div>
                                 </form:form>
