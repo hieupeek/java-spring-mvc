@@ -39,4 +39,12 @@ public class UserService {
     public Role findRoleByName(String name) {
         return this.roleRepository.findByName(name);
     }
+
+    public List<Role> getAllRole() {
+        return this.roleRepository.findAll();
+    }
+
+    public Role getRoleById(Long id) {
+        return this.roleRepository.findById(id).orElse(null);
+    }
 }

@@ -30,7 +30,7 @@
                                 <ol class="breadcrumb mb-4">
                                     <li class="breadcrumb-item active">User</li>
                                 </ol>
-                                <form:form action="/admin/user/updateUser" method="post" modelAttribute="updateUser">
+                                <form:form action="/admin/user/updateUser" method="post" modelAttribute="updateUser" enctype="multipart/form-data">
                                     <div class="container mt-5">
                                         <div class="row">
                                             <div class="col-md-6 col-12 mx-auto">
@@ -39,6 +39,17 @@
                                                 </h3>
                                                 <hr>
                                                 <form:hidden path="id" />
+                                                <div class="mb-3">
+                                                    <label class="form-label">Role:</label>
+                                                    <form:select class="form-control" path="role.id">
+                                                        <c:forEach var="role" items="${roles}">
+                                                            <form:option value="${role.id}" 
+                                                                selected="${updateUser.role.id == role.id ? 'selected' : ''}">
+                                                                ${role.name}
+                                                            </form:option>
+                                                        </c:forEach>
+                                                    </form:select>
+                                                </div>
                                                 <div class="mb-3">
                                                     <label for="exampleInputEmail1" class="form-label">Email:</label>
                                                     <form:input type="email" class="form-control" path="email"
@@ -64,6 +75,26 @@
                                                         class="form-label">Address:</label>
                                                     <form:input type="text" class="form-control" path="address" />
                                                 </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Avatar:</label>
+                                                    <c:if test="${not empty updateUser.avatar}">
+                                                        <div class="mb-2">
+                                                            <img id="currentAvatar" src="/admin/images/avatar/${updateUser.avatar}" 
+                                                                 style="max-width: 150px; height: auto;" 
+                                                                 alt="Current Avatar" class="img-thumbnail">
+                                                        </div>
+                                                    </c:if>
+                                                    <c:if test="${empty updateUser.avatar}">
+                                                        <img id="currentAvatar" style="max-width: 150px; height: auto; display: none;" 
+                                                             alt="Current Avatar" class="img-thumbnail">
+                                                    </c:if>
+                                                    <input type="file" class="form-control" id="hoidanitFile" name="hoidanitFile" accept="image/*" onchange="previewImage()" />
+                                                    <small class="form-text text-muted">Chọn ảnh để thay đổi avatar (không bắt buộc)</small>
+                                                    <div class="mt-2">
+                                                        <img id="previewImage" style="max-width: 150px; height: auto; display: none;" 
+                                                             alt="Preview Avatar" class="img-thumbnail">
+                                                    </div>
+                                                </div>
                                                 <button type="submit" class="btn btn-primary">Update
                                                     User</button>
                                             </div>
@@ -78,6 +109,30 @@
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
                     crossorigin="anonymous"></script>
                 <script src="/admin/js/scripts.js"></script>
+                <script>
+                    function previewImage() {
+                        const fileInput = document.getElementById('hoidanitFile');
+                        const previewImage = document.getElementById('previewImage');
+                        const currentAvatar = document.getElementById('currentAvatar');
+
+                        if (fileInput.files && fileInput.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                previewImage.src = e.target.result;
+                                previewImage.style.display = 'block';
+                                if (currentAvatar) {
+                                    currentAvatar.style.display = 'none';
+                                }
+                            }
+                            reader.readAsDataURL(fileInput.files[0]);
+                        } else {
+                            previewImage.style.display = 'none';
+                            if (currentAvatar) {
+                                currentAvatar.style.display = 'block';
+                            }
+                        }
+                    }
+                </script>
             </body>
 
             </html>

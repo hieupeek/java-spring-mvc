@@ -100,6 +100,7 @@ public class UserController {
     @GetMapping("/admin/user/updateUser/{id}")
     public String getUpdateUserPage(Model model, @PathVariable Long id) {
         model.addAttribute("updateUser", this.userService.getUserById(id));
+        model.addAttribute("roles", this.userService.getAllRole());
         return "admin/user/edit";
     }
 
@@ -112,19 +113,35 @@ public class UserController {
 
         User currentUser = this.userService.getUserById(user.getId());
         if (currentUser != null) {
+            // Chỉ cập nhật avatar nếu file được chọn
             if (!file.isEmpty()) {
                 String img = this.uploadService.handleSaveUploadFile(file, "Avatar");
-                user.setAvatar(img);
+                currentUser.setAvatar(img);
             }
-        }
-        currentUser.setEmail(user.getEmail());
-        currentUser.setPassword(user.getPassword());
-        currentUser.setFullName(user.getFullName());
-        currentUser.setAddress(user.getAddress());
-        currentUser.setPhone(user.getPhone());
-        currentUser.setRole(this.userService.findRoleByName(user.getRole().getName()));
+            // Cập nhật các thông tin khác
+            if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+                currentUser.setEmail(user.getEmail());
+            }
+            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                currentUser.setPassword(user.getPassword());
+            }
+            if (user.getFullName() != null && !user.getFullName().isEmpty()) {
+                currentUser.setFullName(user.getFullName());
+            }
+            if (user.getAddress() != null && !user.getAddress().isEmpty()) {
+                currentUser.setAddress(user.getAddress());
+            }
+            if (user.getPhone() != null && !user.getPhone().isEmpty()) {
+                currentUser.setPhone(user.getPhone());
+            }
 
-        this.userService.handleSaveUser(currentUser);
+            // Cập nhật role nếu được chọn
+            if (user.getRole() != null && user.getRole().getId() > 0) {
+                currentUser.setRole(this.userService.getRoleById(user.getRole().getId()));
+            }
+
+            this.userService.handleSaveUser(currentUser);
+        }
         return "redirect:/admin/user";
     }
 

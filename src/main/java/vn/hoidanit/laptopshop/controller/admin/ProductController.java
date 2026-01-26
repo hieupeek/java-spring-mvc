@@ -100,7 +100,7 @@ public class ProductController {
             return "admin/product/edit";
         }
 
-        Product currentProduct = this.productService.getProductById(product.getId()).get();
+        Product currentProduct = this.productService.getProductById(product.getId());
         if (currentProduct != null) {
             if (!file.isEmpty()) {
                 String img = this.uploadService.handleSaveUploadFile(file, "product");

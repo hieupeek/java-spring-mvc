@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +15,7 @@ import jakarta.servlet.ServletContext;
 @Service
 public class UploadService {
     private final ServletContext servletContext;
+    private static final Logger logger = LoggerFactory.getLogger(UploadService.class);
 
     public UploadService(ServletContext servletContext) {
         this.servletContext = servletContext;
@@ -29,8 +32,13 @@ public class UploadService {
             byte[] bytes = file.getBytes();
 
             File dir = new File(rootPath + File.separator + targetDir);
-            if (!dir.exists())
-                dir.mkdirs();
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    // Failed to create directories
+                    logger.error("Error creating directory: " + dir.getAbsolutePath());
+                    return "";
+                }
+            }
 
             fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
             // Create the file on server
@@ -40,7 +48,7 @@ public class UploadService {
             stream.write(bytes);
             stream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error saving file: ", e);
         }
 
         return fileName;

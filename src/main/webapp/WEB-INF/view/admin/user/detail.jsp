@@ -41,6 +41,13 @@
                                                 <div class="card-header">
                                                     User information
                                                 </div>
+                                                <div class="card-body">
+                                                    <c:if test="${not empty user.avatar}">
+                                                        <img src="/admin/images/avatar/${user.avatar}" 
+                                                             style="max-width: 200px; height: auto; margin-bottom: 15px;" 
+                                                             alt="User Avatar" class="img-thumbnail">
+                                                    </c:if>
+                                                </div>
                                                 <ul class="list-group list-group-flush">
                                                     <li class="list-group-item">ID: ${user.id}</li>
                                                     <li class="list-group-item">Email: ${user.email}</li>
