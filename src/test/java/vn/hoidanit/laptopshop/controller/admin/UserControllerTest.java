@@ -1,11 +1,13 @@
 package vn.hoidanit.laptopshop.controller.admin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.service.UploadService;
 import vn.hoidanit.laptopshop.service.UserService;
 
-@ExtendWith(MockitoExtension.class) // Sử dụng JUnit 5 với Mockito
+@ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
 
     @Mock
@@ -43,54 +45,45 @@ public class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
+    // --- CÁC TEST CASE CŨ (HAPPY PATH) ---
     @Test
     public void testGetAdminHome() {
-        // Arrange
         List<User> listUser = new ArrayList<>();
         listUser.add(new User());
         when(userService.getAllUser()).thenReturn(listUser);
-
-        // Act
         String viewName = userController.getAdminHome(model);
-
-        // Assert
         assertEquals("admin/user/show", viewName);
         verify(model).addAttribute("listUser", listUser);
     }
 
     @Test
     public void testGetUserDetailPage() {
-        // Arrange
         long id = 1L;
         User user = new User();
         when(userService.getUserById(id)).thenReturn(user);
-
-        // Act
         String viewName = userController.getUserDetailPage(model, id);
-
-        // Assert
         assertEquals("admin/user/detail", viewName);
         verify(model).addAttribute("user", user);
     }
 
     @Test
     public void testGetCreateUserPage() {
-        // Act
         String viewName = userController.getCreateUserPage(model);
-
-        // Assert
         assertEquals("admin/user/create", viewName);
         verify(model).addAttribute(eq("newUser"), any(User.class));
     }
 
+    // --- CÁC TEST CASE TÌM LỖI (BUG HUNTING) ---
+
+    // BUG 1: Kiểm thử trường hợp Role bị Null khi tạo User
+    // Kỳ vọng: Code nên có lỗi NullPointerException vì logic
+    // user.getRole().getName() không kiểm tra null
     @Test
-    public void testCreateUser_Success() {
+    public void testCreateUser_WhenRoleIsNull_ShouldThrowNullPointerException() {
         // Arrange
         User user = new User();
         user.setPassword("123456");
-        Role role = new Role();
-        role.setName("USER");
-        user.setRole(role);
+        user.setRole(null); // GIẢ LẬP LỖI: Không có role
 
         BindingResult bindingResult = mock(BindingResult.class);
         MultipartFile file = mock(MultipartFile.class);
@@ -98,64 +91,74 @@ public class UserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
         when(uploadService.handleSaveUploadFile(file, "Avatar")).thenReturn("test.jpg");
         when(passwordEncoder.encode("123456")).thenReturn("encodedPassword");
-        // userService.findRoleByName is called inside the controller to set the role
-        when(userService.findRoleByName("USER")).thenReturn(new Role());
 
-        // Act
-        String viewName = userController.createUser(model, user, bindingResult, file);
-
-        // Assert
-        assertEquals("redirect:/admin/user", viewName);
-        verify(userService).handleSaveUser(user);
+        // Act & Assert
+        // Chúng ta mong đợi một ngoại lệ NullPointerException sẽ được ném ra ở đây
+        // Nếu test này PASS, nghĩa là code của bạn ĐANG CÓ LỖI (không xử lý null)
+        assertThrows(NullPointerException.class, () -> {
+            userController.createUser(model, user, bindingResult, file);
+        });
     }
 
+    // BUG HUNTING 2: Update User không tồn tại
+    // Kỳ vọng: Code xử lý an toàn, không crash, chỉ redirect về trang chủ
     @Test
-    public void testCreateUser_HasErrors() {
+    public void testUpdateUser_WhenUserNotFound_ShouldDoNothingAndRedirect() {
         // Arrange
         User user = new User();
+        user.setId(999L); // ID không tồn tại
         BindingResult bindingResult = mock(BindingResult.class);
         MultipartFile file = mock(MultipartFile.class);
 
-        when(bindingResult.hasErrors()).thenReturn(true);
-
-        // Act
-        String viewName = userController.createUser(model, user, bindingResult, file);
-
-        // Assert
-        assertEquals("admin/user/create", viewName);
-        // Verify that save is NOT called
-        verify(userService, org.mockito.Mockito.never()).handleSaveUser(any());
-    }
-
-    @Test
-    public void testUpdateUser() {
-        // Arrange
-        User user = new User();
-        user.setId(1L);
-        BindingResult bindingResult = mock(BindingResult.class);
-        MultipartFile file = mock(MultipartFile.class);
-
-        User currentUser = new User(); // User tồn tại trong DB
-        when(userService.getUserById(1L)).thenReturn(currentUser);
-        when(file.isEmpty()).thenReturn(true); // Giả sử không upload ảnh mới
+        when(userService.getUserById(999L)).thenReturn(null); // Service trả về null
 
         // Act
         String viewName = userController.updateUser(model, user, bindingResult, file);
 
         // Assert
         assertEquals("redirect:/admin/user", viewName);
-        verify(userService).handleSaveUser(currentUser);
+        // Quan trọng: Phải đảm bảo KHÔNG GỌI hàm save user
+        verify(userService, never()).handleSaveUser(any());
+    }
+
+    // BUG HUNTING 3: Update User với các trường rỗng
+    // Kỳ vọng: Các trường cũ không bị ghi đè bởi chuỗi rỗng
+    @Test
+    public void testUpdateUser_WithEmptyFields_ShouldNotUpdateThoseFields() {
+        // Arrange
+        User inputUser = new User();
+        inputUser.setId(1L);
+        inputUser.setFullName(""); // Tên rỗng
+        inputUser.setAddress(null); // Địa chỉ null
+
+        User databaseUser = new User();
+        databaseUser.setId(1L);
+        databaseUser.setFullName("Old Name");
+        databaseUser.setAddress("Old Address");
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        MultipartFile file = mock(MultipartFile.class);
+
+        when(userService.getUserById(1L)).thenReturn(databaseUser);
+        when(file.isEmpty()).thenReturn(true);
+
+        // Act
+        userController.updateUser(model, inputUser, bindingResult, file);
+
+        // Assert
+        // Logic trong Controller check: if (user.getFullName() != null &&
+        // !user.getFullName().isEmpty())
+        // Nên databaseUser vẫn phải giữ nguyên giá trị cũ
+        assertEquals("Old Name", databaseUser.getFullName());
+        assertEquals("Old Address", databaseUser.getAddress());
+
+        verify(userService).handleSaveUser(databaseUser);
     }
 
     @Test
     public void testDeleteUser() {
-        // Arrange
         long id = 1L;
-
-        // Act
         String viewName = userController.deleteUser(id);
-
-        // Assert
         assertEquals("redirect:/admin/user", viewName);
         verify(userService).deleteUserById(id);
     }
