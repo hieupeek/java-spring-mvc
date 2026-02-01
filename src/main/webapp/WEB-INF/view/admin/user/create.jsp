@@ -104,6 +104,17 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
+                                                            <label for="age" class="form-label">Age:</label>
+                                                            <form:input type="number" class="form-control" path="age"
+                                                                cssErrorClass="form-control is-invalid" />
+                                                            <form:errors path="age" cssClass="invalid-feedback" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
                                                             <label for="role" class="form-label">Role:</label>
                                                             <form:select class="form-select"
                                                                 aria-label="Default select example" path="role.name">
@@ -114,29 +125,30 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+
+                                                <%-- <div class="row">
                                                     <div class="mb-3">
                                                         <label for="avatarFile" class="form-label">Choose
                                                             avatar:</label>
                                                         <input class="form-control" type="file" id="avatarFile"
                                                             accept=".png, .jpg, .jpeg" name="hoidanitFile" />
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="mb-3">
-                                                        <img id="avatarPreview" src="" alt="Avatar Preview"
-                                                            style="display: none; max-width: 200px;">
-                                                    </div>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary">Create</button>
                                             </div>
+                                            <div class="row">
+                                                <div class="mb-3">
+                                                    <img id="avatarPreview" src="" alt="Avatar Preview"
+                                                        style="display: none; max-width: 200px;">
+                                                </div>
+                                            </div> --%>
+                                            <button type="submit" class="btn btn-primary">Create</button>
                                         </div>
                                     </div>
-                                </form:form>
                             </div>
-                        </main>
-                        <jsp:include page="../layout/footer.jsp" />
+                            </form:form>
                     </div>
+                    </main>
+                    <jsp:include page="../layout/footer.jsp" />
+                </div>
                 </div>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
                     crossorigin="anonymous"></script>

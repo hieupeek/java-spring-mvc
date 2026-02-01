@@ -12,12 +12,22 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -26,11 +36,15 @@ public class User {
     @NotEmpty(message = "Email cannot be empty")
     private String email;
 
-    @NotNull(message = "Password cannot be empty")
+    @NotEmpty(message = "Password cannot be empty")
     private String password;
 
     @NotEmpty(message = "Name cannot be empty")
     private String fullName;
+
+    @NotNull(message = "Age cannot be empty")
+    @Min(value = 1, message = "Age must be at least 1")
+    private Integer age;
 
     @NotEmpty(message = "Address cannot be empty")
     private String address;
@@ -38,7 +52,7 @@ public class User {
     @NotEmpty(message = "Phone cannot be empty")
     private String phone;
 
-    private String avatar;
+    // private String avatar;
 
     // roleId
     // user many -> to one role0
@@ -50,82 +64,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
     @Override
     public String toString() {
         return "User [id=" + id + ", email=" + email + ", password=" + password + ", fullName=" + fullName
-                + ", address=" + address + ", phone=" + phone + ", avatar=" + avatar + "]";
+                + ", address=" + address + ", phone=" + phone + ", age=" + age + "]";
     }
 
 }

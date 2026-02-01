@@ -41,31 +41,34 @@
                                                 <div class="card-header">
                                                     User information
                                                 </div>
-                                                <div class="card-body">
+                                                <%-- <div class="card-body">
                                                     <c:if test="${not empty user.avatar}">
-                                                        <img src="/admin/images/avatar/${user.avatar}" 
-                                                             style="max-width: 200px; height: auto; margin-bottom: 15px;" 
-                                                             alt="User Avatar" class="img-thumbnail">
+                                                        <img src="/admin/images/avatar/${user.avatar}"
+                                                            style="max-width: 200px; height: auto; margin-bottom: 15px;"
+                                                            alt="User Avatar" class="img-thumbnail">
                                                     </c:if>
-                                                </div>
-                                                <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">ID: ${user.id}</li>
-                                                    <li class="list-group-item">Email: ${user.email}</li>
-                                                    <li class="list-group-item">FullName: ${user.fullName}</li>
-                                                    <li class="list-group-item">Address: ${user.address}</li>
-                                                </ul>
-                                            </div>
-                                            <a href="/admin/user" class="btn btn-success mt-3">Back</a>
-
+                                            </div> --%>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">ID: ${user.id}</li>
+                                                <li class="list-group-item">Email: ${user.email}</li>
+                                                <li class="list-group-item">FullName: ${user.fullName}</li>
+                                                <li class="list-group-item">Address: ${user.address}</li>
+                                                <li class="list-group-item">Phone: ${user.phone}</li>
+                                                <li class="list-group-item">Age: ${user.age}</li>
+                                                <li class="list-group-item">Role: ${user.role.name}</li>
+                                            </ul>
                                         </div>
+                                        <a href="/admin/user" class="btn btn-success mt-3">Back</a>
 
                                     </div>
 
                                 </div>
+
                             </div>
-                        </main>
-                        <jsp:include page="../layout/footer.jsp" />
                     </div>
+                    </main>
+                    <jsp:include page="../layout/footer.jsp" />
+                </div>
                 </div>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
                     crossorigin="anonymous"></script>

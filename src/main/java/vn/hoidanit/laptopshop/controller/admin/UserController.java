@@ -2,24 +2,17 @@ package vn.hoidanit.laptopshop.controller.admin;
 
 import java.util.List;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.ui.Model;
 
 import jakarta.validation.Valid;
 
-import org.springframework.ui.Model;
-
-import vn.hoidanit.laptopshop.domain.Product;
 import vn.hoidanit.laptopshop.domain.User;
-import vn.hoidanit.laptopshop.service.UploadService;
 import vn.hoidanit.laptopshop.service.UserService;
 
 @Controller
@@ -27,15 +20,8 @@ public class UserController {
 
     private final UserService userService;
 
-    private final UploadService uploadService;
-
-    private final PasswordEncoder passwordEncoder;
-
-    public UserController(UserService userService, UploadService uploadService,
-            PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.uploadService = uploadService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     // @RequestMapping("/")
@@ -72,26 +58,14 @@ public class UserController {
     @PostMapping(value = "/admin/user/create")
     public String createUser(Model model,
             @ModelAttribute("newUser") @Valid User user,
-            BindingResult newUserBindingResult,
+            BindingResult newUserBindingResult) {
 
-            @RequestParam("hoidanitFile") MultipartFile file) {
-
-        System.out.println("Creating user..." + user);
-
-        List<FieldError> errors = newUserBindingResult.getFieldErrors();
-        for (FieldError error : errors) {
-            System.out.println(error.getField() + " - " + error.getDefaultMessage());
-        }
         // validate
         if (newUserBindingResult.hasErrors()) {
             return "admin/user/create";
         }
 
-        String avatarName = this.uploadService.handleSaveUploadFile(file, "Avatar");
-        String hashPassword = this.passwordEncoder.encode(user.getPassword());
-        user.setAvatar(avatarName);
-        user.setPassword(hashPassword);
-        user.setRole(this.userService.findRoleByName(user.getRole().getName()));
+        // Logic (hash password, set role) đã được chuyển vào UserService.handleSaveUser
         this.userService.handleSaveUser(user);
         return "redirect:/admin/user";
     }
@@ -106,49 +80,14 @@ public class UserController {
 
     // update user
     @PostMapping(value = "/admin/user/updateUser")
-    public String updateUser(Model model, @ModelAttribute("updateUser") @Valid User user,
-            BindingResult updateUserBindingResult,
-            @RequestParam("hoidanitFile") MultipartFile file) {
-        System.out.println("Updating user..." + user);
-
-        User currentUser = this.userService.getUserById(user.getId());
-        if (currentUser != null) {
-            // Chỉ cập nhật avatar nếu file được chọn
-            if (!file.isEmpty()) {
-                String img = this.uploadService.handleSaveUploadFile(file, "Avatar");
-                currentUser.setAvatar(img);
-            }
-            // Cập nhật các thông tin khác
-            if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-                currentUser.setEmail(user.getEmail());
-            }
-            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-                currentUser.setPassword(user.getPassword());
-            }
-            if (user.getFullName() != null && !user.getFullName().isEmpty()) {
-                currentUser.setFullName(user.getFullName());
-            }
-            if (user.getAddress() != null && !user.getAddress().isEmpty()) {
-                currentUser.setAddress(user.getAddress());
-            }
-            if (user.getPhone() != null && !user.getPhone().isEmpty()) {
-                currentUser.setPhone(user.getPhone());
-            }
-
-            // Cập nhật role nếu được chọn
-            if (user.getRole() != null && user.getRole().getId() > 0) {
-                currentUser.setRole(this.userService.getRoleById(user.getRole().getId()));
-            }
-
-            this.userService.handleSaveUser(currentUser);
-        }
+    public String updateUser(Model model, @ModelAttribute("updateUser") User user) {
+        this.userService.handleUpdateUser(user);
         return "redirect:/admin/user";
     }
 
     // delete user
     @GetMapping(value = "/admin/user/deleteUser/{id}")
     public String deleteUser(@PathVariable Long id) {
-        System.out.println("Deleting user...");
         this.userService.deleteUserById(id);
         return "redirect:/admin/user";
     }

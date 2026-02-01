@@ -1,120 +1,83 @@
-# Testing Process Report: User Management Module
+# Quá trình Kiểm thử và Tối ưu hóa Module Quản lý Người dùng
 
-## 1. Module Overview (Summary)
-**Module Name:** User Management
-**Class:** `vn.hoidanit.laptopshop.controller.admin.UserController`
+## 1. Giới thiệu Module (Summary)
+**Module:** Quản lý người dùng (User Management)
+**Thành phần trọng tâm:** `vn.hoidanit.laptopshop.service.UserService`
 
-### Functionality
-This module is responsible for managing users in the Admin dashboard. Key functions include:
-1.  **List Users:** Display a table of all users (`/admin/user`).
-2.  **View Detail:** Show specific user information (`/admin/user/view/{id}`).
-3.  **Create User:** Handle form submission to add a new user (`/admin/user/create`).
-4.  **Update User:** Edit existing user details (`/admin/user/update/{id}`).
-5.  **Delete User:** Remove a user from the system (`/admin/user/delete/{id}`).
-
-### Complexity Metrics
-*   **Items (Fields):** 8 items (ID, Email, Password, FullName, Address, Phone, Avatar, Role).
-*   **Transactions:**
-    1.  Form Validation (Spring Validation).
-    2.  File Upload (Avatar image processing).
-    3.  Password Hashing (BCrypt).
-    4.  Database Persistence (Save/Update/Delete via Service).
-    5.  Role Assignment.
+### Chức năng và Đặc điểm:
+*   **Chức năng chính:** Xử lý logic lưu mới (`handleSaveUser`) và cập nhật (`handleUpdateUser`) thông tin người dùng.
+*   **Đặc điểm kiến trúc:** Đã thực hiện Refactor để đưa toàn bộ logic nghiệp vụ (Business Logic) từ Controller xuống Service. Controller hiện chỉ đóng vai trò điều hướng.
+*   **Thông số (Complexity):**
+    *   **Fields (Items):** 8 trường thông tin (Email, Password, Name, Address, Phone, Age, Avatar, Role).
+    *   **Giao dịch (Transactions):** 5 bước xử lý: Kiểm tra user tồn tại, Băm mật khẩu (BCrypt), Gán quyền (Role), Lưu dữ liệu (JPA), và Điều hướng.
 
 ---
 
-## 2. Issue Discovery (Bug Hunting)
-**Tool Used:** JUnit 5 with Mockito (Unit Testing).
+## 2. Tìm lỗi bằng JUnit (Bug Hunting)
+**Công cụ:** JUnit 5 kết hợp Mockito.
 
-### The Issue: NullPointerException in `createUser`
-*   **Description:** When a user submits the creation form without selecting a **Role** (or if the role data is null), the system attempts to access `user.getRole().getName()`.
-*   **Consequence:** Since `user.getRole()` is null, calling `.getName()` throws a `NullPointerException`, causing a 500 Internal Server Error crash.
+### Lỗi phát hiện: NullPointerException (NPE)
+*   **Vị trí:** Hàm `handleSaveUser` trong `UserService`.
+*   **Nguyên nhân:** Khi tạo mới người dùng nhưng dữ liệu `Role` không được cung cấp (null), hệ thống cố gắng gọi `user.getRole().getName()`.
+*   **Hậu quả:** Hệ thống crash ngay lập tức, trả về lỗi 500 cho người dùng.
 
-### Design Test Case (Before Fix)
-We wrote a test case specifically to reproduce this crash. The test passes if it successfully catches the exception, confirming the bug exists.
-
+### Test Case minh họa lỗi (Trước khi sửa):
 ```java
-// File: UserControllerTest.java
-
-// BUG HUNTING: Test case to confirm the system crashes when Role is null
 @Test
-public void testCreateUser_WhenRoleIsNull_ShouldThrowNullPointerException() {
-    // Arrange
+public void testHandleSaveUser_WhenRoleIsNull_ShouldThrowNullPointerException() {
+    // Chuẩn bị dữ liệu rỗng Role
     User user = new User();
-    user.setPassword("123456");
-    user.setRole(null); // SIMULATE BUG: No role provided
+    user.setRole(null); 
 
-    BindingResult bindingResult = mock(BindingResult.class);
-    MultipartFile file = mock(MultipartFile.class);
-
-    // Mock dependencies
-    when(bindingResult.hasErrors()).thenReturn(false);
-    when(uploadService.handleSaveUploadFile(file, "Avatar")).thenReturn("test.jpg");
-    when(passwordEncoder.encode("123456")).thenReturn("encodedPassword");
-
-    // Act & Assert
-    // We expect the system to throw NullPointerException
+    // Thực thi và kiểm tra: Mong đợi ném ra lỗi NPE
     assertThrows(NullPointerException.class, () -> {
-        userController.createUser(model, user, bindingResult, file);
+        userService.handleSaveUser(user);
     });
 }
 ```
-
-**Result:** ✅ Test Passed (The exception was thrown as expected -> **Bug Confirmed**).
+**Kết quả:** Test **PASS** (Xác nhận code đang bị lỗi NullPointerException).
 
 ---
 
-## 3. Bug Fixing & Verification
-### The Solution
-We added a defensive check (`if` statement) to ensure `user.getRole()` is not null before accessing its properties.
+## 3. Sửa lỗi và Kiểm chứng (Fix & Demo)
 
-### Fixed Code (Controller)
+### Cách sửa lỗi:
+Thêm kiểm tra điều kiện (Null Check) cho đối tượng Role trước khi xử lý logic gán quyền.
+
+### Mã nguồn sau khi sửa (Fix Code):
 ```java
-// File: UserController.java
+public User handleSaveUser(User user) {
+    // ... hash password ...
 
-// ... existing code ...
-user.setAvatar(avatarName);
-user.setPassword(hashPassword);
+    // GIẢI PHÁP: Thêm check null
+    if (user.getRole() != null && user.getRole().getName() != null) {
+        Role r = this.findRoleByName(user.getRole().getName());
+        user.setRole(r);
+    }
 
-// FIX: Check for null before accessing role name
-if (user.getRole() != null) {
-    user.setRole(this.userService.findRoleByName(user.getRole().getName()));
+    return this.userRepository.save(user);
 }
-
-this.userService.handleSaveUser(user);
-// ... existing code ...
 ```
 
-### Verification Test Case (After Fix)
-We updated the test case to expect a **success** outcome (redirect) instead of an exception.
+### Kiểm chứng kết quả (Sau khi sửa):
+Cập nhật Test Case để mong đợi hệ thống chạy mượt mà thay vì gặp lỗi.
 
 ```java
-// File: UserControllerTest.java
-
-// VERIFICATION: Confirm the system runs successfully even with null Role
 @Test
-public void testCreateUser_WhenRoleIsNull_ShouldRunSuccessfully() {
-    // Arrange
+public void testHandleSaveUser_WhenRoleIsNull_ShouldRunSuccessfully() {
     User user = new User();
-    user.setPassword("123456");
-    user.setRole(null); // Input is still null
+    user.setRole(null); // Vẫn test với dữ liệu lỗi
 
-    BindingResult bindingResult = mock(BindingResult.class);
-    MultipartFile file = mock(MultipartFile.class);
-
-    when(bindingResult.hasErrors()).thenReturn(false);
-    when(uploadService.handleSaveUploadFile(file, "Avatar")).thenReturn("test.jpg");
-    when(passwordEncoder.encode("123456")).thenReturn("encodedPassword");
-
-    // Act
-    String viewName = userController.createUser(model, user, bindingResult, file);
-
-    // Assert
-    // The system should NOT crash, and should redirect to the user list
-    assertEquals("redirect:/admin/user", viewName);
-    verify(userService).handleSaveUser(user);
+    // Hiện tại: Chạy thành công, không crash
+    User result = userService.handleSaveUser(user);
+    assertNotNull(result);
 }
 ```
+**Kết quả:** Test chạy thành công. Module đã trở nên bền bỉ, không còn bị crash khi dữ liệu đầu vào không hoàn hảo.
 
-**Result:** ✅ Test Passed (Green checkmark).
-**Conclusion:** The module is now robust against missing Role data. The bug is resolved.
+---
+
+## 4. Kết luận
+*   Việc đưa logic vào **Service** giúp mã nguồn sạch sẽ, dễ bảo trì và quan trọng nhất là dễ dàng thực hiện **Unit Test**.
+*   Kiểm thử tự động giúp phát hiện sớm các lỗi "chết người" như `NullPointerException` trước khi ứng dụng được triển khai đến người dùng cuối.
+*   Quá trình: **Viết Test -> Phát hiện lỗi -> Sửa code -> Chạy lại Test** là quy trình chuẩn để đảm bảo chất lượng phần mềm.
